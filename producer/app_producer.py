@@ -5,7 +5,7 @@ import os
 def generate_events():
     print("Generating events...")
     events_list = []
-    for _ in range(10):
+    for _ in range(20):
         event = generate_camera_event()
         print(f"Generated event: {event}")
         events_list.append(event)
@@ -15,7 +15,7 @@ def send_events(events_list):
     producer = Producer(topic='camera_events', bootstrap_servers=os.getenv("BOOTSTRAP_SERVERS"))
     for event in events_list:
         print(f"Sending event: {event}")
-        producer.send_message(event)
+        producer.send_message(event.to_dict())
 
 def main():
    events = generate_events()

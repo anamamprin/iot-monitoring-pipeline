@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 @dataclass
 class SensorCamEvent:
@@ -8,3 +8,6 @@ class SensorCamEvent:
     faces_detected: int
     battery: float
     room: str
+
+    def to_dict(self):
+        return asdict(self)

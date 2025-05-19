@@ -1,18 +1,14 @@
-from datetime import datetime
-import random
 from faker import Faker
+from sensor_cam_event import SensorCamEvent
 
 fake = Faker()
 
-def generate_camera_event() -> dict:
-    return {
-        "camera_id": fake.uuid4(),
-        "timestamp": datetime.now().isoformat(),
-        "motion_detected": random.choice([True, False]),
-        "faces_detected": random.randint(0, 3),
-        "sound_detected": random.choice([True, False]),
-        "battery": round(random.uniform(20.0, 100.0), 2),
-        "room": "Living Room"
-    }
-
-
+def generate_camera_event() -> SensorCamEvent:
+    return SensorCamEvent(
+        sensor_id=fake.uuid4(),
+        timestamp=fake.date_time_between(start_date="-60d", end_date="now").isoformat(),
+        motion_detected=fake.boolean(chance_of_getting_true=50),
+        faces_detected=fake.random_int(0, 5),
+        battery=round(fake.pyfloat(min_value=15.0, max_value=100.0), 2),
+        room=fake.random_element(elements=("Living Room", "Bedroom", "Kitchen", "Garage")),
+    )

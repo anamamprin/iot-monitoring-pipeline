@@ -4,8 +4,9 @@ RUN pip install --upgrade pip
 
 WORKDIR /app
 
-COPY . /app
+COPY ./consumer /app/
+COPY ../requirements.txt /app/requirements.txt
 
 RUN pip install -r /app/requirements.txt
 
-ENTRYPOINT [ "/app/start.sh" ]
+CMD [ "python", "app_consumer.py" ]

@@ -12,8 +12,3 @@ class Producer:
     def send_message(self, message: dict):
         self.producer.send(self.topic, value=message)
         self.producer.flush()
-
-
-
-
-
