@@ -1,6 +1,7 @@
 from kafka import KafkaConsumer
 import json
-from pymongo import MongoClient
+from pymongo import MongoClient, errors as pymongo_errors
+from event_processor import EventProcessor
 
 
 class Consumer:
@@ -17,7 +18,24 @@ class Consumer:
     def consume(self):
         db = self.mongo_client["sensors_db"]
         collection = db["events"]
+
         for message in self.consumer:
-            print("Message received:", message.value)
-            collection.insert_one(message.value)
-            print("Message inserted into MongoDB:", message.value)
+            try:
+                event = message.value
+                print("Message received:", event)
+
+                event = EventProcessor.check_battery_conditions(event)
+                event = EventProcessor.analyse_event_risk(event)
+
+                collection.insert_one(event)
+                print("Message inserted into MongoDB:", event)
+
+            except json.JSONDecodeError:
+                print("[ERROR] Failed to decode message JSON:", message )
+
+            except Exception as e:
+                print(f"[ERROR] Unexpected error while processing event: {e}")
+
+            except pymongo_errors.PyMongoError as e:
+                print(f"[ERROR] MongoDB error: {e}") 
+
